@@ -38,5 +38,7 @@ pdf转换的图片默认设置300DPI，基本满足需求，可能有部分pdf�
 ## 另：单图像去除水印
 运行UI1.html(如Open In Browser)，即可在网站中去除图片水印、对比处理前后图像、下载处理后图像
 
+### 图像去除水印网页↓↓↓
+
 ![PS_%ROHKWH$CSV4X1_Z6QRY](https://github.com/StuHude/PDF-Watermark-Removal/assets/89311278/3db93765-0b97-4cfc-a9d4-3fceb2ba68e7)
 
