@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watermark Removal App</title>
+    <style>        #upload-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+        }
+        #message {
+            margin-top: 20px;
+        }
+        #download-link {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="upload-section">
+        <input type="file" id="file-input" accept=".pdf">
+        <button id="upload-btn">上传PDF文件</button>
+        <button id="remove-watermark-btn" disabled>去除水印</button>
+    </div>
+    <p id="message"></p>
+    <a id="download-link" href="#" download>下载处理后的PDF</a>
+
+    <script>        document.getElementById('file-input').addEventListener('change', () => {
+            const fileInput = document.getElementById('file-input');
+            if (fileInput.files.length === 0) {
+                document.getElementById('upload-btn').innerText = '选择PDF文件';
+                document.getElementById('remove-watermark-btn').disabled = true;
+            } else {
+                document.getElementById('upload-btn').innerText = '开始上传';
+                document.getElementById('remove-watermark-btn').disabled = false;
+            }
+        });
+
+        document.getElementById('upload-btn').addEventListener('click', async () => {
+            if (!document.getElementById('file-input').files.length) return;
+
+            const formData = new FormData();
+            formData.append('file', document.getElementById('file-input').files[0]);
+
+            try {
+                await fetch('/upload', { method: 'POST', body: formData });
+                document.getElementById('message').textContent = '文件上传成功';
+                document.getElementById('remove-watermark-btn').innerText = '去除水印并生成无水印PDF';
+            } catch (error) {
+                console.error('Error uploading file:', error);
+            }
+        });
+
+        document.getElementById('remove-watermark-btn').addEventListener('click', async () => {
+            try {
+                await fetch('/remove_watermark');
+                document.getElementById('message').textContent = '水印去除成功';
+                document.getElementById('download-link').href = '/download';
+                document.getElementById('download-link').style.display = 'block';
+            } catch (error) {
+                console.error('Error removing watermark:', error);
+            }
+        });
+    </script>
+</body>
+</html>

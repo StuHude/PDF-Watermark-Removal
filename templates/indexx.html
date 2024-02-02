@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Watermark from PDF</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Upload PDF to Remove Watermark</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" id="pdf-file-input" name="file" accept=".pdf">
+        <button type="submit">Remove Watermark & Download</button>
+    </form>
+
+    <script>        $(document).ready(function() {
+            $('#upload-form').on('submit', function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: '/remove_watermark',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response, status, xhr) {
+                        var filename = xhr.getResponseHeader('Content-Disposition').split('filename=')[1];
+                        var blob = new Blob([response], {type: "application/pdf"});
+
+                        // Create a link and click on it to download the file
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = filename;
+                        link.click();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error:", xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

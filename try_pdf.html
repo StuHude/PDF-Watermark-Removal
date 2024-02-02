@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF水印去除</title>
+</head>
+<body>
+    <h1>PDF水印去除</h1>
+    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".pdf" id="fileInput" style="display: none;">
+        <label for="fileInput" style="cursor: pointer;">选择PDF文件</label>
+    </form>
+    <button onclick="removeWatermark()">去除水印</button>
+    <p id="message"></p>
+    <a id="downloadLink" href="#" style="display: none;">下载处理后文件</a>
+
+    <script>
+        function removeWatermark() {
+            fetch('/remove_watermark', { method: 'GET' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("message").innerText = data.message;
+                    if (data.success) {
+                        document.getElementById("downloadLink").href = '/download';
+                        document.getElementById("downloadLink").style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("message").innerText = "出现错误：" + error.message;
+                });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>XYCの去除水印</title>
+    <script>
+        function removeWatermark() {
+            var inputImage = document.getElementById("inputImage");
+            var resultImage = document.getElementById("resultImage");
+            var downloadLink = document.getElementById("downloadLink");
+            var uploadInput = document.getElementById("uploadInput");
+
+            var file = uploadInput.files[0];
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                inputImage.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            }).then(function(response) {
+                return response.text();
+            }).then(function(message) {
+                if (message === '文件上传成功') {
+                    fetch('/remove_watermark', {
+                        method: 'GET'
+                    }).then(function(response) {
+                        return response.text();
+                    }).then(function(message) {
+                        if (message === '水印去除成功') {
+                            resultImage.src = '/static/result_image.png';
+                            downloadLink.href = '/download';
+                            downloadLink.style.display = 'block';
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>去除水印</h1>
+    <input type="file" id="uploadInput">
+    <br><br>
+    <button onclick="removeWatermark()">去除水印</button>
+    <br><br>
+    <h2>输入图像</h2>
+    <img id="inputImage" width="400">
+    <br><br>
+    <h2>去除水印结果</h2>
+    <img id="resultImage" width="400">
+    <br><br>
+    <a id="downloadLink" style="display: none;">下载去除水印结果</a>
+</body>
+</html>

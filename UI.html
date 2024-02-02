@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>去除水印</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var inputElement = document.getElementById("uploadInput");
+            inputElement.addEventListener("change", handleFiles, false);
+
+            function handleFiles() {
+                var fileList = this.files;
+                var file = fileList[0];
+                var img = document.getElementById("inputImage");
+                img.src = URL.createObjectURL(file);
+            }
+        });
+
+        function removeWatermark() {
+            var img = document.getElementById("inputImage");
+            var canvas = document.createElement("canvas");
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            var data = imageData.data;
+
+            for (var i = 0; i < data.length; i += 4) {
+              var r = data[i];
+              var g = data[i + 1];
+              var b = data[i + 2];
+              if (r >= 160 && g >= 160 && b >= 160) {
+              data[i] = 255;
+              data[i + 1] = 255;
+              data[i + 2] = 255;
+              }
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+
+            var resultImage = document.getElementById("resultImage");
+            resultImage.src = canvas.toDataURL();
+
+            var resultImage = document.getElementById("resultImage");
+            resultImage.src = canvas.toDataURL();
+        }
+    </script>
+</head>
+<body>
+    <h1>去除水印</h1>
+    <input type="file" id="uploadInput">
+    <br><br>
+    <button onclick="removeWatermark()">去除水印</button>
+    <br><br>
+    <h2>输入图像</h2>
+    <img id="inputImage" width="400">
+    <br><br>
+    <h2>去除水印结果</h2>
+    <img id="resultImage" width="400">
+</body>
+</html>
